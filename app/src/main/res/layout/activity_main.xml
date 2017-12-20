@@ -9,10 +9,7 @@
    android:orientation="vertical"
     tools:context="sugoi.android.bookmanager.Activities.MainActivity">
 
-    <SearchView
-        android:id="@+id/search"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+
 
     <ListView
         android:layout_width="match_parent"

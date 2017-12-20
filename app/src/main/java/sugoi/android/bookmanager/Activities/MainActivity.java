@@ -2,6 +2,7 @@ package sugoi.android.bookmanager.Activities;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,9 +10,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import sugoi.android.bookmanager.Adapter.BookAdapter;
 import sugoi.android.bookmanager.Models.BookModel;
 import sugoi.android.bookmanager.R;
 import sugoi.android.bookmanager.others.API;
@@ -40,12 +46,35 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener{
 
     ArrayList<BookModel> heroList;
 
     BookAdapter adapter;
     ListView listView;
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        adapter.getFilter().filter(newText);
+
+        // use to enable search view popup text
+//        if (TextUtils.isEmpty(newText)) {
+//            friendListView.clearTextFilter();
+//        }
+//        else {
+//            friendListView.setFilterText(newText.toString());
+//        }
+
+        return true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
     JSONArray object;
 
-    private void performreq(final String url) {
+    public void performreq(final String url) {
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -187,11 +216,25 @@ public class MainActivity extends AppCompatActivity {
         }catch(Exception e){}
     }
 
+    private SearchView searchView;
+    private MenuItem searchMenuItem;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.main_menu,menu);
+
+        SearchManager searchManager = (SearchManager)
+                getSystemService(Context.SEARCH_SERVICE);
+        searchMenuItem = menu.findItem(R.id.search);
+        searchView = (SearchView) searchMenuItem.getActionView();
+
+        searchView.setSearchableInfo(searchManager.
+                getSearchableInfo(getComponentName()));
+        searchView.setSubmitButtonEnabled(true);
+        searchView.setOnQueryTextListener(this);
+
         return true;
     }
 
@@ -250,85 +293,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public class BookAdapter extends ArrayAdapter<BookModel> {
-        private Context context;
-
-
-        public BookAdapter(Activity context, ArrayList<BookModel> recent) {
-            // Here, we initialize the ArrayAdapter's internal storage for the context and the list.
-            // the second argument is used when the ArrayAdapter is populating a single TextView.
-            // Because this is a custom adapter for two TextViewsw, the adapter is not
-            // going to use this second argument, so it can be any value. Here, we used 0.
-            super(context, 0, recent);
-            this.context=context;
-
-        }
-
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            // Check if the existing view is being reused, otherwise inflate the view
-            View listItemView = convertView;
-            if(listItemView == null) {
-                listItemView = LayoutInflater.from(getContext()).inflate(
-                        R.layout.list_item, parent, false);
-            }
-
-// Get the {@link AndroidFlavor} object located at this position in the list
-            final BookModel book = getItem(position);
-
-            TextView bookname = (TextView) listItemView.findViewById(R.id.book_title);
-            TextView type = (TextView) listItemView.findViewById(R.id.book_type);
-            TextView author = (TextView) listItemView.findViewById(R.id.book_author);
-            TextView last_seen = (TextView) listItemView.findViewById(R.id.book_seen);
-
-            final ImageView delete_button = (ImageView) listItemView.findViewById(R.id.delete_image);
-
-            delete_button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    final Dialog delte_dialog = new Dialog(MainActivity.this);
-                    delte_dialog.setContentView(R.layout.custom_dialog);
-
-                    delte_dialog.show();
-
-                    Button cancel = (Button) delte_dialog.findViewById(R.id.no);
-                    cancel.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            delte_dialog.dismiss();
-                        }
-                    });
-
-                    Button proceed = (Button) delte_dialog.findViewById(R.id.yes);
-                    proceed.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                          //  Toast.makeText(context,book.getB_id()+"",Toast.LENGTH_SHORT).show();
-                            delete_book(book.getB_id());
-                            delte_dialog.dismiss();
-                        }
-                    });
-                }
-            });
-
-
-            bookname.setText(book.getBook_name());
-            type.setText(book.getType());
-            author.setText(book.getAuthor());
-            last_seen.setText(book.getLastseen());
 
 
 
-            return listItemView;
-        }
-    }
-
-    public void delete_book(int pos)
-    {
-        performreq("http://shaikadil.esy.es/API/deletebookAPI.php?b_id="+pos);
-        performreq(API.URL_READBOOKS);
-      //  adapter.notifyDataSetChanged();
-
-    }
 }
