@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <EditText
+        android:id="@+id/ins_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:hint=" Title:"
+        />
+
+
+    <EditText
+        android:id="@+id/ins_author"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint=" Author"
+        />
+
+    <EditText
+        android:id="@+id/ins_owner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint=" Owner:"
+        />
+    <EditText
+        android:id="@+id/ins_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint=" Type:"
+        />
+    <EditText
+        android:id="@+id/ins_comments"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint=" Comments:"
+        />
+
+    <EditText
+        android:id="@+id/ins_lastseen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint=" Last seen:"
+        android:inputType="datetime"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_margin="10dp"
+            android:id="@+id/insert_cancel"
+            android:text="Cancel"
+            android:background="@color/colorPrimary"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:id="@+id/insert_button"
+            android:background="@color/colorPrimary"
+            android:layout_margin="10dp"
+            android:text="Insert"
+            android:layout_weight="1"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</LinearLayout>
