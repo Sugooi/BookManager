@@ -88,16 +88,61 @@ public class MainActivity extends AppCompatActivity {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
 
-                if(url.equals(API.URL_INSERTBOOK))
-                {
-                    params.put("owner",ins_owner);
-                    params.put("type",ins_type);
-                    params.put("title",ins_title);
-                    params.put("last_seen",ins_lastseen);
-                    params.put("author",ins_author);
-                    params.put("comments",ins_comment);
 
-                }
+
+
+
+                return params;
+            }
+
+        };
+
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
+
+
+    }
+
+
+    private void insert_req() {
+
+        ins_title = title.getText().toString();
+        ins_author = author.getText().toString();
+        ins_type = title.getText().toString();
+        ins_comment = comment.getText().toString();
+        ins_lastseen = last_seen.getText().toString();
+        ins_owner = owner.getText().toString();
+
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, API.URL_INSERTBOOK,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                          //Toast.makeText(MainActivity.this, response, Toast.LENGTH_LONG).show();
+
+
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(MainActivity.this, error.toString(), Toast.LENGTH_LONG).show();
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+
+
+                params.put("owner",ins_owner);
+                params.put("type",ins_type);
+                params.put("title",ins_title);
+                params.put("last_seen",ins_lastseen);
+                params.put("author",ins_author);
+                params.put("comments",ins_comment);
+
 
 
 
@@ -171,17 +216,20 @@ public class MainActivity extends AppCompatActivity {
                 owner = (EditText)insert_book.findViewById(R.id.ins_owner);
                 insert = (Button) insert_book.findViewById(R.id.insert_button);
                 cancel_insert = (Button) insert_book.findViewById(R.id.insert_cancel);
-                ins_title = title.getText().toString();
-                ins_author = author.getText().toString();
-                ins_type = title.getText().toString();
-                ins_comment = comment.getText().toString();
-                ins_lastseen = last_seen.getText().toString();
-                ins_owner = owner.getText().toString();
 
                 insert.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        performreq(API.URL_INSERTBOOK);
+                        insert_req();
+                        insert_book.dismiss();
+                        performreq(API.URL_READBOOKS);
+                    }
+                });
+
+                cancel_insert.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        insert_book.dismiss();
                     }
                 });
 
